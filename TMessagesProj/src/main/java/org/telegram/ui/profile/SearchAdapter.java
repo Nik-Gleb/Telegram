@@ -57,7 +57,6 @@ import org.telegram.ui.PremiumPreviewFragment;
 import org.telegram.ui.PrivacyControlActivity;
 import org.telegram.ui.PrivacySettingsActivity;
 import org.telegram.ui.PrivacyUsersActivity;
-import org.telegram.ui.ProfileActivity;
 import org.telegram.ui.ProxyListActivity;
 import org.telegram.ui.ReactionsDoubleTapManageActivity;
 import org.telegram.ui.SessionsActivity;

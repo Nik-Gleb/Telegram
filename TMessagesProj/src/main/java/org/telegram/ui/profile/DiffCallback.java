@@ -5,7 +5,6 @@ import android.util.SparseIntArray;
 import androidx.recyclerview.widget.DiffUtil;
 
 import org.telegram.tgnet.TLRPC;
-import org.telegram.ui.ProfileActivity;
 
 import java.util.ArrayList;
 

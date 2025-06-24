@@ -18,7 +18,6 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.ActionBar;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.ProfileGalleryView;
-import org.telegram.ui.ProfileActivity;
 
 import java.util.Arrays;
 

@@ -146,6 +146,7 @@ import org.telegram.ui.Components.URLSpanNoUnderline;
 import org.telegram.ui.Components.URLSpanReplacement;
 import org.telegram.ui.Components.URLSpanUserMention;
 import org.telegram.ui.Components.UndoView;
+import org.telegram.ui.profile.ProfileActivity;
 import org.telegram.ui.profile.ShowDrawable;
 
 import java.io.BufferedWriter;

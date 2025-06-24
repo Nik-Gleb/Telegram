@@ -265,6 +265,7 @@ import org.telegram.ui.bots.BotAdView;
 import org.telegram.ui.bots.BotCommandsMenuView;
 import org.telegram.ui.bots.BotWebViewSheet;
 import org.telegram.ui.bots.WebViewRequestProps;
+import org.telegram.ui.profile.ProfileActivity;
 import org.telegram.ui.profile.ShowDrawable;
 
 import java.io.BufferedReader;

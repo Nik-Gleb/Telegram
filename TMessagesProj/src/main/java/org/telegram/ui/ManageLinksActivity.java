@@ -83,6 +83,7 @@ import org.telegram.ui.Components.TimerParticles;
 import org.telegram.ui.Stars.StarsController;
 import org.telegram.ui.Stars.StarsIntroActivity;
 import org.telegram.ui.Stories.recorder.HintView2;
+import org.telegram.ui.profile.ProfileActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;

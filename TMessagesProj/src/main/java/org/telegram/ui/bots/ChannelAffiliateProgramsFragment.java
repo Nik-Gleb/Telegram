@@ -78,7 +78,7 @@ import org.telegram.ui.Components.UniversalRecyclerView;
 import org.telegram.ui.FilterCreateActivity;
 import org.telegram.ui.GradientHeaderActivity;
 import org.telegram.ui.LaunchActivity;
-import org.telegram.ui.ProfileActivity;
+import org.telegram.ui.profile.ProfileActivity;
 import org.telegram.ui.Stars.BotStarsController;
 import org.telegram.ui.Stars.StarsIntroActivity;
 import org.telegram.ui.Stories.recorder.ButtonWithCounterView;

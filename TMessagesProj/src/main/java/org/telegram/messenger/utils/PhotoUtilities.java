@@ -18,7 +18,7 @@ import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ChatActivity;
 import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.ImageUpdater;
-import org.telegram.ui.ProfileActivity;
+import org.telegram.ui.profile.ProfileActivity;
 
 import java.io.File;
 import java.util.ArrayList;

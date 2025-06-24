@@ -103,7 +103,7 @@ import org.telegram.ui.DialogsActivity;
 import org.telegram.ui.GroupColorActivity;
 import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.PremiumPreviewFragment;
-import org.telegram.ui.ProfileActivity;
+import org.telegram.ui.profile.ProfileActivity;
 import org.telegram.ui.StatisticActivity;
 import org.telegram.ui.Stories.ChannelBoostUtilities;
 import org.telegram.ui.Stories.DarkThemeResourceProvider;

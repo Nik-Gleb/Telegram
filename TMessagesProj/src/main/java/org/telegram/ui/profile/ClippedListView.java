@@ -3,7 +3,6 @@ package org.telegram.ui.profile;
 import android.content.Context;
 
 import org.telegram.ui.Components.RecyclerListView;
-import org.telegram.ui.ProfileActivity;
 import org.telegram.ui.Stories.StoriesListPlaceProvider;
 
 public class ClippedListView extends RecyclerListView implements StoriesListPlaceProvider.ClippedView {

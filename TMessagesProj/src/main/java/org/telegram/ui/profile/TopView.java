@@ -24,7 +24,6 @@ import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
 import org.telegram.ui.DialogsActivity;
 import org.telegram.ui.PeerColorActivity;
-import org.telegram.ui.ProfileActivity;
 import org.telegram.ui.Stars.StarGiftPatterns;
 
 public class TopView extends FrameLayout {

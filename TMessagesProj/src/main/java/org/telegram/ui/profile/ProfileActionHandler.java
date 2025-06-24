@@ -2,8 +2,6 @@ package org.telegram.ui.profile;
 
 import static org.telegram.messenger.LocaleController.formatString;
 import static org.telegram.messenger.LocaleController.getString;
-import static org.telegram.ui.ProfileActivity.delete_topic;
-import static org.telegram.ui.ProfileActivity.gift_premium;
 
 import android.Manifest;
 import android.content.Context;
@@ -60,7 +58,6 @@ import org.telegram.ui.LogoutActivity;
 import org.telegram.ui.PeerColorActivity;
 import org.telegram.ui.PhotoViewer;
 import org.telegram.ui.PremiumPreviewFragment;
-import org.telegram.ui.ProfileActivity;
 import org.telegram.ui.QrActivity;
 import org.telegram.ui.ReportBottomSheet;
 import org.telegram.ui.StatisticActivity;

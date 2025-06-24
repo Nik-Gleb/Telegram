@@ -79,7 +79,7 @@ import org.telegram.ui.Components.SearchField;
 import org.telegram.ui.Components.StickerEmptyView;
 import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.PremiumPreviewFragment;
-import org.telegram.ui.ProfileActivity;
+import org.telegram.ui.profile.ProfileActivity;
 import org.telegram.ui.RecyclerListViewScroller;
 import org.telegram.ui.Stories.recorder.StoryPrivacyBottomSheet;
 

@@ -17,7 +17,6 @@ import org.telegram.messenger.FileLog;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.SharedMediaLayout;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
-import org.telegram.ui.ProfileActivity;
 
 import java.util.ArrayList;
 

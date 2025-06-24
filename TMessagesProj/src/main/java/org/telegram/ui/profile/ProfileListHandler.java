@@ -52,7 +52,6 @@ import org.telegram.ui.MemberRequestsActivity;
 import org.telegram.ui.NotificationsSettingsActivity;
 import org.telegram.ui.PremiumPreviewFragment;
 import org.telegram.ui.PrivacySettingsActivity;
-import org.telegram.ui.ProfileActivity;
 import org.telegram.ui.ProfileNotificationsActivity;
 import org.telegram.ui.ReportBottomSheet;
 import org.telegram.ui.SessionsActivity;

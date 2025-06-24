@@ -16,7 +16,6 @@ import org.telegram.ui.Components.AnimationProperties;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.ChatActivityInterface;
 import org.telegram.ui.Components.ProfileGalleryView;
-import org.telegram.ui.ProfileActivity;
 
 public class AvatarImageView extends BackupImageView {
 

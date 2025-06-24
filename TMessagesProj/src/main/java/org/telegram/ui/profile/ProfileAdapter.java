@@ -83,7 +83,6 @@ import org.telegram.ui.Components.Premium.ProfilePremiumCell;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.UndoView;
 import org.telegram.ui.FragmentUsernameBottomSheet;
-import org.telegram.ui.ProfileActivity;
 import org.telegram.ui.Stars.BotStarsController;
 import org.telegram.ui.Stars.StarsController;
 import org.telegram.ui.Stars.StarsIntroActivity;

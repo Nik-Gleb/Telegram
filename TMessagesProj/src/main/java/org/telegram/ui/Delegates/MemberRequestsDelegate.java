@@ -74,7 +74,7 @@ import org.telegram.ui.Components.StickerEmptyView;
 import org.telegram.ui.Components.TypefaceSpan;
 import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.MemberRequestsActivity;
-import org.telegram.ui.ProfileActivity;
+import org.telegram.ui.profile.ProfileActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;

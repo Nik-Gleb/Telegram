@@ -6,7 +6,7 @@
  * Copyright Nikolai Kudashov, 2013-2018.
  */
 
-package org.telegram.ui;
+package org.telegram.ui.profile;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.AndroidUtilities.lerp;
@@ -146,6 +146,8 @@ import org.telegram.ui.ActionBar.OKLCH;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ActionBar.ThemeDescription;
+import org.telegram.ui.ActionIntroActivity;
+import org.telegram.ui.AutoDeleteMessagesActivity;
 import org.telegram.ui.Business.OpeningHoursActivity;
 import org.telegram.ui.Business.ProfileHoursCell;
 import org.telegram.ui.Cells.AboutLinkCell;
@@ -161,6 +163,10 @@ import org.telegram.ui.Cells.TextCell;
 import org.telegram.ui.Cells.TextDetailCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.UserCell;
+import org.telegram.ui.ChangeUsernameActivity;
+import org.telegram.ui.ChannelAdminLogActivity;
+import org.telegram.ui.ChatActivity;
+import org.telegram.ui.ChatRightsEditActivity;
 import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.AnimatedFileDrawable;
@@ -210,32 +216,37 @@ import org.telegram.ui.Components.TypefaceSpan;
 import org.telegram.ui.Components.UndoView;
 import org.telegram.ui.Components.VectorAvatarThumbDrawable;
 import org.telegram.ui.Components.voip.VoIPHelper;
+import org.telegram.ui.ContactAddActivity;
+import org.telegram.ui.DialogsActivity;
+import org.telegram.ui.FragmentUsernameBottomSheet;
 import org.telegram.ui.Gifts.GiftSheet;
+import org.telegram.ui.GroupCreateActivity;
+import org.telegram.ui.LaunchActivity;
+import org.telegram.ui.LocationActivity;
+import org.telegram.ui.PhotoViewer;
+import org.telegram.ui.PinchToZoomHelper;
+import org.telegram.ui.PremiumPreviewFragment;
+import org.telegram.ui.PrivacyControlActivity;
+import org.telegram.ui.ProfileBirthdayEffect;
+import org.telegram.ui.QrActivity;
+import org.telegram.ui.RestrictedLanguagesSelectActivity;
+import org.telegram.ui.SelectAnimatedEmojiDialog;
 import org.telegram.ui.Stars.BotStarsController;
 import org.telegram.ui.Stars.ProfileGiftsView;
 import org.telegram.ui.Stars.StarGiftSheet;
 import org.telegram.ui.Stars.StarsController;
+import org.telegram.ui.StatisticActivity;
 import org.telegram.ui.Stories.ProfileStoriesView;
 import org.telegram.ui.Stories.StoriesController;
 import org.telegram.ui.Stories.StoryViewer;
 import org.telegram.ui.Stories.recorder.ButtonWithCounterView;
 import org.telegram.ui.Stories.recorder.HintView2;
 import org.telegram.ui.Stories.recorder.StoryRecorder;
+import org.telegram.ui.TopicsFragment;
+import org.telegram.ui.UserInfoActivity;
 import org.telegram.ui.bots.BotBiometry;
 import org.telegram.ui.bots.BotLocation;
 import org.telegram.ui.bots.SetupEmojiStatusSheet;
-import org.telegram.ui.profile.AvatarImageView;
-import org.telegram.ui.profile.ClippedListView;
-import org.telegram.ui.profile.DiffCallback;
-import org.telegram.ui.profile.NestedFrameLayout;
-import org.telegram.ui.profile.OverlaysView;
-import org.telegram.ui.profile.PagerIndicatorView;
-import org.telegram.ui.profile.ProfileAdapter;
-import org.telegram.ui.profile.ProfileListHandler;
-import org.telegram.ui.profile.ProfileOnItemLongClickListener;
-import org.telegram.ui.profile.SearchAdapter;
-import org.telegram.ui.profile.ShowDrawable;
-import org.telegram.ui.profile.TopView;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -8871,7 +8882,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 BaseFragment previousFragment = parentLayout.getFragmentStack().get(parentLayout.getFragmentStack().size() - 2);
                 if (previousFragment instanceof ChatActivity) {
                     finishFragment();
-                    ((ChatActivity) previousFragment).chatActivityEnterView.setCommand(null, url, false, false);
+                    ((ChatActivity) previousFragment).getChatActivityEnterView().setCommand(null, url, false, false);
                 }
             }
         }

@@ -40,7 +40,6 @@ import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.ShareAlert;
 import org.telegram.ui.Components.voip.VoIPHelper;
 import org.telegram.ui.LaunchActivity;
-import org.telegram.ui.ProfileActivity;
 import org.telegram.ui.RestrictedLanguagesSelectActivity;
 import org.telegram.ui.Stories.recorder.DualCameraView;
 import org.telegram.ui.UserInfoActivity;

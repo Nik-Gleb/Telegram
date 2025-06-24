@@ -19,7 +19,6 @@ import androidx.viewpager.widget.ViewPager;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.ActionBarMenuItem;
 import org.telegram.ui.Components.CubicBezierInterpolator;
-import org.telegram.ui.ProfileActivity;
 
 public class PagerIndicatorView extends View {
 

@@ -107,6 +107,7 @@ import org.telegram.ui.Components.StorageUsageView;
 import org.telegram.ui.Components.TypefaceSpan;
 import org.telegram.ui.Components.UndoView;
 import org.telegram.ui.Storage.CacheModel;
+import org.telegram.ui.profile.ProfileActivity;
 
 import java.io.File;
 import java.util.ArrayList;
