@@ -846,7 +846,7 @@ public abstract class BaseFragment {
         return getAccountInstance().getMessagesController();
     }
 
-    protected ContactsController getContactsController() {
+    public ContactsController getContactsController() {
         return getAccountInstance().getContactsController();
     }
 
@@ -862,7 +862,7 @@ public abstract class BaseFragment {
         return getAccountInstance().getLocationController();
     }
 
-    protected NotificationsController getNotificationsController() {
+    public NotificationsController getNotificationsController() {
         return getAccountInstance().getNotificationsController();
     }
 
@@ -878,7 +878,7 @@ public abstract class BaseFragment {
         return getAccountInstance().getFileLoader();
     }
 
-    protected SecretChatHelper getSecretChatHelper() {
+    public SecretChatHelper getSecretChatHelper() {
         return getAccountInstance().getSecretChatHelper();
     }
 
