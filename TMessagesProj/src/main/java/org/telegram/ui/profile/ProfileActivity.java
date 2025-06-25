@@ -14,7 +14,6 @@ import static org.telegram.messenger.ContactsController.PRIVACY_RULES_TYPE_ADDED
 import static org.telegram.messenger.LocaleController.formatPluralString;
 import static org.telegram.messenger.LocaleController.formatString;
 import static org.telegram.messenger.LocaleController.getString;
-import static org.telegram.ui.Stars.StarsIntroActivity.formatStarsAmountShort;
 import static org.telegram.ui.profile.ProfileActionHandler.handleMenuAction;
 
 import android.animation.Animator;
@@ -4869,7 +4868,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
             }
 
-            avatarX = -AndroidUtilities.dpf2(47f) * diff;
+            final int leftAvatar = avatarContainer.getLeft();
+            final int centerAvatar = avatarContainer.getMeasuredWidth() / 2;
+            avatarContainer.setPivotX(centerAvatar);
+            final int centerAvatarContainer = avatarContainer.getContext().getResources().getDisplayMetrics().widthPixels / 2;
+            avatarX = centerAvatarContainer - centerAvatar - leftAvatar;
             avatarY = (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() / 2.0f * (1.0f + diff) - 21 * AndroidUtilities.density + 27 * AndroidUtilities.density * diff + actionBar.getTranslationY();
 
             float h = openAnimationInProgress ? initialAnimationExtraHeight : extraHeight;
@@ -5227,9 +5230,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void refreshNameAndOnlineXY() {
-        nameX = AndroidUtilities.dp(-21f) + avatarContainer.getMeasuredWidth() * (avatarScale - (42f + 18f) / 42f);
+        nameX = AndroidUtilities.dp(-21f) /*+ avatarContainer.getMeasuredWidth() * (avatarScale - (42f + 18f) / 42f)*/;
         nameY = (float) Math.floor(avatarY) + AndroidUtilities.dp(1.3f) + AndroidUtilities.dp(7f) + avatarContainer.getMeasuredHeight() * (avatarScale - (42f + 18f) / 42f) / 2f;
-        onlineX = AndroidUtilities.dp(-21f) + avatarContainer.getMeasuredWidth() * (avatarScale - (42f + 18f) / 42f);
+        onlineX = AndroidUtilities.dp(-21f) /*+ avatarContainer.getMeasuredWidth() * (avatarScale - (42f + 18f) / 42f)*/;
         onlineY = (float) Math.floor(avatarY) + AndroidUtilities.dp(24) + (float) Math.floor(11 * AndroidUtilities.density) + avatarContainer.getMeasuredHeight() * (avatarScale - (42f + 18f) / 42f) / 2f;
     }
 
