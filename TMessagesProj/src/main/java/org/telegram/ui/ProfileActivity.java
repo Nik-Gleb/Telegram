@@ -479,6 +479,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private float onlineX;
     private float onlineY;
     private float expandProgress;
+    private float lastExpandProgress;
+    private float expandThreshold;
     private float listViewVelocityY;
     private ValueAnimator expandAnimator;
     private float currentExpandAnimatorValue;
@@ -2227,6 +2229,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         if (lastFragment instanceof ChatActivity && ((ChatActivity) lastFragment).themeDelegate != null && ((ChatActivity) lastFragment).themeDelegate.getCurrentTheme() != null) {
             resourcesProvider = lastFragment.getResourceProvider();
         }
+        expandThreshold = expandThreshold(context);
         searchTransitionOffset = 0;
         searchTransitionProgress = 1f;
         searchMode = false;
@@ -5190,7 +5193,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             }
         };
         mediaCounterTextView.setAlpha(0.0f);
-        avatarContainer2.addView(mediaCounterTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, AVATAR_TEXT_START + .33f, -2, 8, 0));
+        avatarContainer2.addView(mediaCounterTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, AVATAR_TEXT_START, -2, 8, 0));
         storyView = new ProfileStoriesView(context, currentAccount, getDialogId(), isTopic, avatarContainer, avatarImage, resourcesProvider) {
             @Override
             protected void onTap(StoryViewer.PlaceProvider provider) {
@@ -7350,6 +7353,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             float h = openAnimationInProgress ? initialAnimationExtraHeight : extraHeight;
             if (h > headerHeight() || isPulledDown) {
                 expandProgress = Math.max(0f, Math.min(1f, (h - headerHeight()) / (avatarContainerWidth - newTop - headerHeight())));
+                final boolean draggingDown = expandProgress > lastExpandProgress;
+                final boolean draggingUp   = expandProgress < lastExpandProgress;
+                lastExpandProgress = expandProgress;
                 final float expandValue = Math.min(1f, expandProgress * AVATAR_EXPAND_RATIO);
                 avatarScale = AndroidUtilities.lerp(AVATAR_SCALE_BASELINE_1, AVATAR_SCALE_BASELINE_2, expandValue);
                 avatarX = avatarContainerCenterX - avatarSmallSize * avatarScale / 2f;
@@ -7361,9 +7367,22 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     giftsView.invalidate();
                 }
 
+                final boolean reachOpen  = !isPulledDown && draggingDown &&  expandProgress     >= AVATAR_EXPAND_FACTOR + expandThreshold;
+                final boolean reachClose =  isPulledDown && draggingUp && (1f - expandProgress) >= AVATAR_EXPAND_FACTOR + expandThreshold;
+
                 final float durationFactor = Math.min(AndroidUtilities.dpf2(2000f), Math.max(AndroidUtilities.dpf2(1100f), Math.abs(listViewVelocityY))) / AndroidUtilities.dpf2(1100f);
 
                 if (allowPullingDown && (openingAvatar || expandProgress >= AVATAR_EXPAND_FACTOR)) {
+                    ViewGroup.LayoutParams params = avatarsViewPager.getLayoutParams();
+                    params.width = (int) avatarContainerWidth;
+                    params.height = (int) (h + newTop);
+                    avatarsViewPager.requestLayout();
+                } else  if (isNoExpandingOrCollapsingNow() || expandAnimatorValues[1] == 1) {
+                    avatarContainer.setScaleX(avatarScale);
+                    avatarContainer.setScaleY(avatarScale);
+                }
+
+                if (allowPullingDown && (openingAvatar || reachOpen)) {
                     if (!isPulledDown) {
                         if (otherItem != null) {
                             if (!getMessagesController().isChatNoForwards(currentChat)) {
@@ -7415,12 +7434,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 avatarsViewPager.setVisibility(View.VISIBLE);
                             }
                         });
+                        hapticFeedback(false);
                         expandAnimator.start();
                     }
-                    ViewGroup.LayoutParams params = avatarsViewPager.getLayoutParams();
-                    params.width = (int) avatarContainerWidth;
-                    params.height = (int) (h + newTop);
-                    avatarsViewPager.requestLayout();
                     if (isNoExpandingOrCollapsingNow()) {
                         float additionalTranslationY = 0;
                         if (openAnimationInProgress && playProfileAnimation == 2) {
@@ -7436,7 +7452,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         updateCollectibleHint();
                     }
                 } else {
-                    if (isPulledDown) {
+                    if (reachClose) {
                         isPulledDown = false;
                         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.needCheckSystemBarColors, true);
                         if (otherItem != null) {
@@ -7484,12 +7500,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         avatarImage.setForegroundAlpha(1f);
                         avatarContainer.setVisibility(View.VISIBLE);
                         avatarsViewPager.setVisibility(View.GONE);
+                        hapticFeedback(true);
                         expandAnimator.start();
-                    }
-
-                    if (isNoExpandingOrCollapsingNow() || expandAnimatorValues[1] == 1) {
-                        avatarContainer.setScaleX(avatarScale);
-                        avatarContainer.setScaleY(avatarScale);
                     }
 
                     if (isNoExpandingOrCollapsingNow()) {
@@ -14659,10 +14671,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private int actionBarTotalHeight() { return ActionBar.getCurrentActionBarHeight() + statusBarInset(); }
 
     /** @return additional height of header.  */
-    private static int headerHeight() { return AndroidUtilities.dp(88f);  }
+    private static int headerHeight() { return AndroidUtilities.dp(100f);  }
 
     /** @return avatar title start space. */
-    private static final int AVATAR_TEXT_START = 118;  // 64 + 42 + 12
+    private static final int AVATAR_TEXT_START = 0;
 
     /** Avatar sizes. */
     private static final float
@@ -14673,7 +14685,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             AVATAR_LARGE_SIZE = AVATAR_MAIN_SIZE + 8;
 
     private static final float
-            AVATAR_EXPAND_RATIO = 3f,
+            AVATAR_EXPAND_RATIO = 10f,
             AVATAR_EXPAND_FACTOR = 1f / AVATAR_EXPAND_RATIO;
 
     /** Avatar Scales. */
@@ -14693,25 +14705,26 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private static int avatarStartSpace() { return AndroidUtilities.dp(AVATAR_START_SPACE); }
 
     /**
-     * Calculates the horizontal center of the avatar container in the profile header.
+     * Calculates the threshold value for expanding the header based on the device's touch slop.
+     * Used to determine the minimum distance a user must move to consider the expansion gesture valid.
      *
-     * @return the X coordinate of the center of the avatar container (in pixels)
+     * @param context Context for obtaining device configuration.
+     * @return Threshold value (maximum 0.15), expressed as a fraction of the header height.
      */
-    private float avatarContainerCenterX() {
-        return (float) screenWidth() / 2f;
+    private static float expandThreshold(Context context) {
+        final android.view.ViewConfiguration config =
+                android.view.ViewConfiguration.get(context);
+        float touchSlop = config.getScaledTouchSlop();
+        final float threshold = 1.2f * touchSlop / headerHeight();  // + 20% reserved
+        return Math.min(threshold, 0.15f);                          // not more >15 %
     }
 
-    /**
-     * Returns the screen width in pixels.
-     * For tablets, returns a fixed value of dp(490),
-     * for other devices — the actual screen width.
-     *
-     * @return screen width in pixels
-     */
-    private static int screenWidth() {
-        return AndroidUtilities.isTablet() ?
-                AndroidUtilities.dp(490) :
-                AndroidUtilities.displaySize.x;
+    private final void hapticFeedback(boolean weak) {
+        if (avatarContainer == null) return;
+        final int type = weak ?
+                HapticFeedbackConstants.SEGMENT_FREQUENT_TICK :
+                HapticFeedbackConstants.CLOCK_TICK;
+        avatarContainer.performHapticFeedback(type);
     }
 
     /**
