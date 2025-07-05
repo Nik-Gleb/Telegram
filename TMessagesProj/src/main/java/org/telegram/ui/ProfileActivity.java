@@ -5578,7 +5578,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             layoutManager.scrollToPositionWithOffset(0, headerHeight() - listView.getPaddingTop());
             listView.post(() -> {
                 needLayout(true);
-                if (expandAnimator.isRunning()) {
+                if (!isNoExpandingOrCollapsingNow()) {
                     expandAnimator.cancel();
                 }
                 setAvatarExpandProgress(1f);
@@ -7402,7 +7402,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     params.width = listView.getMeasuredWidth();
                     params.height = (int) (h + newTop);
                     avatarsViewPager.requestLayout();
-                    if (!expandAnimator.isRunning()) {
+                    if (isNoExpandingOrCollapsingNow()) {
                         float additionalTranslationY = 0;
                         if (openAnimationInProgress && playProfileAnimation == 2) {
                             additionalTranslationY = -(1.0f - avatarAnimationProgress) * AndroidUtilities.dp(50);
@@ -7471,7 +7471,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     avatarContainer.setScaleX(avatarScale);
                     avatarContainer.setScaleY(avatarScale);
 
-                    if (expandAnimator == null || !expandAnimator.isRunning()) {
+                    if (isNoExpandingOrCollapsingNow()) {
                         refreshNameAndOnlineXY();
                         nameTextView[1].setTranslationX(nameX);
                         nameTextView[1].setTranslationY(nameY);
@@ -7554,7 +7554,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     giftsView.invalidate();
                 }
                 float nameScale = 1.0f + 0.12f * diff;
-                if (expandAnimator == null || !expandAnimator.isRunning()) {
+                if (isNoExpandingOrCollapsingNow()) {
                     avatarContainer.setScaleX(avatarScale);
                     avatarContainer.setScaleY(avatarScale);
                     avatarContainer.setTranslationX(avatarX);
@@ -7578,7 +7578,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     if (nameTextView[a] == null) {
                         continue;
                     }
-                    if (expandAnimator == null || !expandAnimator.isRunning()) {
+                    if (isNoExpandingOrCollapsingNow()) {
                         nameTextView[a].setTranslationX(nameX);
                         nameTextView[a].setTranslationY(nameY);
 
@@ -7595,12 +7595,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 updateCollectibleHint();
             }
 
-            if (!openAnimationInProgress && (expandAnimator == null || !expandAnimator.isRunning())) {
+            if (!openAnimationInProgress && isNoExpandingOrCollapsingNow()) {
                 needLayoutText(diff);
             }
         }
 
-        if (isPulledDown || (overlaysView != null && overlaysView.animator != null && overlaysView.animator.isRunning())) {
+        if (isPulledDown || isOverlayingNow()) {
             final ViewGroup.LayoutParams overlaysLp = overlaysView.getLayoutParams();
             overlaysLp.width = listView.getMeasuredWidth();
             overlaysLp.height = (int) (extraHeight + newTop);
@@ -14663,4 +14663,47 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
     /** @return avatar start space (normal by guidelines). */
     private static int avatarStartSpace() { return AndroidUtilities.dp(AVATAR_START_SPACE); }
+
+    /**
+     * Calculates the horizontal center of the avatar container in the profile header.
+     *
+     * @return the X coordinate of the center of the avatar container (in pixels)
+     */
+    private float avatarContainerCenterX() {
+        return (float) screenWidth() / 2f;
+    }
+
+    /**
+     * Returns the screen width in pixels.
+     * For tablets, returns a fixed value of dp(490),
+     * for other devices — the actual screen width.
+     *
+     * @return screen width in pixels
+     */
+    private static int screenWidth() {
+        return AndroidUtilities.isTablet() ?
+                AndroidUtilities.dp(490) :
+                AndroidUtilities.displaySize.x;
+    }
+
+    /**
+     * Returns true if the avatar expand or collapse animation is not currently running.
+     *
+     * @return true if the animation is not running, otherwise false
+     */
+    private boolean isNoExpandingOrCollapsingNow() {
+        return expandAnimator == null || !expandAnimator.isRunning();
+    }
+
+    /**
+     * Returns true if the overlay animation is currently running.
+     *
+     * @return true if the animation is running, otherwise false
+     */
+    private boolean isOverlayingNow() {
+        return
+                overlaysView != null &&
+                        overlaysView.animator != null &&
+                        overlaysView.animator.isRunning();
+    }
 }
