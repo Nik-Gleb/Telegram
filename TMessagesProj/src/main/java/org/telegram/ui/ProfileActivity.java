@@ -7334,7 +7334,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             float h = openAnimationInProgress ? initialAnimationExtraHeight : extraHeight;
             if (h > headerHeight() || isPulledDown) {
                 expandProgress = Math.max(0f, Math.min(1f, (h - headerHeight()) / (listView.getMeasuredWidth() - newTop - headerHeight())));
-                avatarScale = AndroidUtilities.lerp(AVATAR_SCALE_BASELINE_1, AVATAR_SCALE_BASELINE_2, Math.min(1f, expandProgress * AVATAR_EXPAND_RATIO));
+                final float expandValue = Math.min(1f, expandProgress * AVATAR_EXPAND_RATIO);
+                avatarScale = AndroidUtilities.lerp(AVATAR_SCALE_BASELINE_1, AVATAR_SCALE_BASELINE_2, expandValue);
                 if (storyView != null) {
                     storyView.invalidate();
                 }
@@ -7468,8 +7469,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         expandAnimator.start();
                     }
 
-                    avatarContainer.setScaleX(avatarScale);
-                    avatarContainer.setScaleY(avatarScale);
+                    if (isNoExpandingOrCollapsingNow() || expandAnimatorValues[1] == 1) {
+                        avatarContainer.setScaleX(avatarScale);
+                        avatarContainer.setScaleY(avatarScale);
+                    }
 
                     if (isNoExpandingOrCollapsingNow()) {
                         refreshNameAndOnlineXY();
@@ -7499,7 +7502,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 nameTextView[1].setScaleX(1.67f);
                 nameTextView[1].setScaleY(1.67f);
 
-                avatarScale = AndroidUtilities.lerp(1.0f, AVATAR_SCALE_BASELINE_2, avatarAnimationProgress);
+                avatarScale = AndroidUtilities.lerp(AVATAR_SCALE_BASELINE_0, AVATAR_SCALE_BASELINE_2, avatarAnimationProgress);
                 if (storyView != null) {
                     storyView.setExpandProgress(1f);
                 }
@@ -7546,7 +7549,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
                 updateCollectibleHint();
             } else if (extraHeight <= headerHeight()) {
-                avatarScale = 1.0f + (AVATAR_EXTRA_SIZE * diff) / AVATAR_SMALL_SIZE;
+                avatarScale = AndroidUtilities.lerp(AVATAR_SCALE_BASELINE_0, AVATAR_SCALE_BASELINE_1, diff);
                 if (storyView != null) {
                     storyView.invalidate();
                 }
