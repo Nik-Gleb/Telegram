@@ -64,7 +64,6 @@ import android.media.MediaCodecList;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.SystemClock;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -157,7 +156,6 @@ import org.telegram.messenger.R;
 import org.telegram.messenger.SendMessagesHelper;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.SvgHelper;
-import org.telegram.messenger.TranslateController;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.messenger.Utilities;
@@ -1117,7 +1115,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         @Override
         protected void onDraw(Canvas canvas) {
-            final int height = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
+            final int height = actionBarTotalHeight();
             final float v = extraHeight + height + searchTransitionOffset;
 
             int y1 = (int) (v * (1.0f - mediaHeaderAnimationProgress));
@@ -1157,7 +1155,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     if (loadedScale > 0) {
                         canvas.save();
                         canvas.clipRect(0, 0, getMeasuredWidth(), y1);
-                        StarGiftPatterns.drawProfilePattern(canvas, emoji, getMeasuredWidth(), ((actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + dp(144)) - (1f - headerStretchRatio()) * dp(50), headerExpansionFraction(), full);
+                        StarGiftPatterns.drawProfilePattern(canvas, emoji, getMeasuredWidth(), (statusBarInset() + dp(144)) - (1f - headerStretchRatio()) * dp(50), headerExpansionFraction(), full);
                         canvas.restore();
                     }
                 }
@@ -1189,7 +1187,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
     private class OverlaysView extends View implements ProfileGalleryView.Callback {
 
-        private final int statusBarHeight = actionBar.getOccupyStatusBar() && !inBubbleMode ? AndroidUtilities.statusBarHeight : 0;
+        private final int statusBarHeight = inBubbleMode ? 0 : statusBarInset();
 
         private final Rect topOverlayRect = new Rect();
         private final Rect bottomOverlayRect = new Rect();
@@ -1318,7 +1316,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         @Override
         protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-            final int actionBarHeight = statusBarHeight + ActionBar.getCurrentActionBarHeight();
+            final int actionBarHeight = actionBarTotalHeight();
             final float k = 0.5f;
             topOverlayRect.set(0, 0, w, (int) (actionBarHeight * k));
             bottomOverlayRect.set(0, (int) (h - AndroidUtilities.dp(72f) * k), w, h);
@@ -1822,7 +1820,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             final float textWidth = textPaint.measureText(getCurrentTitle());
             indicatorRect.right = getMeasuredWidth() - AndroidUtilities.dp(54f) - (qrItem != null ? AndroidUtilities.dp(48) : 0);
             indicatorRect.left = indicatorRect.right - (textWidth + AndroidUtilities.dpf2(16f));
-            indicatorRect.top = (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + AndroidUtilities.dp(15f);
+            indicatorRect.top = statusBarInset() + AndroidUtilities.dp(15f);
             indicatorRect.bottom = indicatorRect.top + AndroidUtilities.dp(26);
             setPivotX(indicatorRect.centerX());
             setPivotY(indicatorRect.centerY());
@@ -2825,7 +2823,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
             @Override
             protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-                final int actionBarHeight = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
+                final int actionBarHeight = actionBarTotalHeight();
                 if (listView != null) {
                     LayoutParams layoutParams = (LayoutParams) listView.getLayoutParams();
                     if (layoutParams.topMargin != actionBarHeight) {
@@ -3709,7 +3707,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         final View view = layoutManager.findViewByPosition(0);
                         if (view != null) {
                             if (isPulledDown) {
-                                final int actionBarHeight = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
+                                final int actionBarHeight = actionBarTotalHeight();
                                 listView.smoothScrollBy(0, view.getTop() - listView.getMeasuredWidth() + actionBarHeight, CubicBezierInterpolator.EASE_OUT_QUINT);
                             } else {
                                 listView.smoothScrollBy(0, view.getTop() - headerHeight(), CubicBezierInterpolator.EASE_OUT_QUINT);
@@ -5664,7 +5662,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void setAvatarExpandProgress(float animatedFracture) {
-        final int newTop = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
+        final int newTop = actionBarTotalHeight();
         final float value = currentExpandAnimatorValue = AndroidUtilities.lerp(expandAnimatorValues, currentExpanAnimatorFracture = animatedFracture);
         checkPhotoDescriptionAlpha();
         avatarContainer.setScaleX(avatarScale);
@@ -7238,7 +7236,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void needLayout(boolean animated) {
-        final int newTop = (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight();
+        final int newTop = actionBarTotalHeight();
 
         FrameLayout.LayoutParams layoutParams;
         if (listView != null && !openAnimationInProgress) {
@@ -7257,7 +7255,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             listView.setOverScrollMode(isHeaderExpanded() && extraHeight < listView.getMeasuredWidth() - newTop ? View.OVER_SCROLL_NEVER : View.OVER_SCROLL_ALWAYS);
 
             if (writeButton != null) {
-                writeButton.setTranslationY((actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() + extraHeight + searchTransitionOffset - AndroidUtilities.dp(29.5f));
+                writeButton.setTranslationY(actionBarTotalHeight() + extraHeight + searchTransitionOffset - AndroidUtilities.dp(29.5f));
 
                 boolean writeButtonVisible = diff > 0.2f && !searchMode && (imageUpdater == null || setAvatarRow == -1);
                 if (writeButtonVisible && chatId != 0) {
@@ -7323,15 +7321,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
 
                 if (storyView != null) {
-                    storyView.setExpandCoords(avatarContainer2.getMeasuredWidth() - AndroidUtilities.dp(40), writeButtonVisible, (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() + extraHeight + searchTransitionOffset);
+                    storyView.setExpandCoords(avatarContainer2.getMeasuredWidth() - AndroidUtilities.dp(40), writeButtonVisible, actionBarTotalHeight() + extraHeight + searchTransitionOffset);
                 }
                 if (giftsView != null) {
-                    giftsView.setExpandCoords(avatarContainer2.getMeasuredWidth() - AndroidUtilities.dp(40), writeButtonVisible, (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() + extraHeight + searchTransitionOffset);
+                    giftsView.setExpandCoords(avatarContainer2.getMeasuredWidth() - AndroidUtilities.dp(40), writeButtonVisible, actionBarTotalHeight() + extraHeight + searchTransitionOffset);
                 }
             }
 
             avatarX = -AndroidUtilities.dpf2(47f) * diff;
-            avatarY = (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() / 2.0f * (1.0f + diff) - 21 * AndroidUtilities.density + 27 * AndroidUtilities.density * diff + actionBar.getTranslationY();
+            avatarY = statusBarInset() + ActionBar.getCurrentActionBarHeight() / 2.0f * (1.0f + diff) - 21 * AndroidUtilities.density + 27 * AndroidUtilities.density * diff + actionBar.getTranslationY();
 
             float h = openAnimationInProgress ? initialAnimationExtraHeight : extraHeight;
             if (h > headerHeight() || isPulledDown) {
@@ -7488,7 +7486,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
             if (openAnimationInProgress && playProfileAnimation == 2) {
                 float avX = 0;
-                float avY = (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() / 2.0f - 21 * AndroidUtilities.density + actionBar.getTranslationY();
+                float avY = statusBarInset() + ActionBar.getCurrentActionBarHeight() / 2.0f - 21 * AndroidUtilities.density + actionBar.getTranslationY();
 
                 nameTextView[0].setTranslationX(0);
                 nameTextView[0].setTranslationY((float) Math.floor(avY) + AndroidUtilities.dp(1.3f));
@@ -9502,7 +9500,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         if (sharedMediaRow == -1) {
             bottomPaddingRow = rowCount++;
         }
-        final int actionBarHeight = actionBar != null ? ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) : 0;
+        final int actionBarHeight = actionBar != null ? actionBarTotalHeight() : 0;
         if (listView == null || prevRowsCount > rowCount || listContentHeight != 0 && listContentHeight + actionBarHeight + headerHeight() < listView.getMeasuredHeight()) {
             lastMeasuredContentWidth = 0;
         }
@@ -11493,7 +11491,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                         totalHeight += listView.getChildAt(i).getMeasuredHeight();
                                     }
                                 }
-                                int paddingHeight = (fragmentView == null ? 0 : fragmentView.getMeasuredHeight()) - ActionBar.getCurrentActionBarHeight() - AndroidUtilities.statusBarHeight - totalHeight;
+                                int paddingHeight = (fragmentView == null ? 0 : fragmentView.getMeasuredHeight()) - actionBarTotalHeight() - totalHeight;
                                 if (paddingHeight > headerHeight()) {
                                     paddingHeight = 0;
                                 }
@@ -13676,7 +13674,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     setAvatarExpandProgress(1f);
                     extraHeight = headerHeight();
                 } else {
-                    final int actionBarHeight = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
+                    final int actionBarHeight = actionBarTotalHeight();
                     int ws = View.MeasureSpec.makeMeasureSpec(listView.getMeasuredWidth(), View.MeasureSpec.EXACTLY);
                     int hs = View.MeasureSpec.makeMeasureSpec(listView.getMeasuredHeight(), View.MeasureSpec.UNSPECIFIED);
                     int contentHeight = 0;
@@ -13943,7 +13941,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         if (storyView == null && giftsView == null || actionBar == null) {
             return;
         }
-        float atop = actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0;
+        float atop = statusBarInset();
         float aleft = 0;
         float aright = actionBar.getWidth();
 
@@ -14631,6 +14629,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     /** @return true if the header has already stretched beyond the base height. */
     private boolean isHeaderExpanded() { return extraHeight > headerHeight(); }
 
-    /** @return additional height of header  */
+    /** @return the height of the status bar if the ActionBar actually occupies its place, otherwise 0. */
+    private int statusBarInset() { return actionBar != null && actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0; }
+
+    /** @return full height of total actionbar including insets. */
+    private int actionBarTotalHeight() { return ActionBar.getCurrentActionBarHeight() + statusBarInset(); }
+
+    /** @return additional height of header.  */
     private static int headerHeight() { return AndroidUtilities.dp(88f);  }
 }
