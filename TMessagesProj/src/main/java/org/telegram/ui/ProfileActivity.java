@@ -4904,7 +4904,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         frameLayout.addView(avatarContainer2, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.START, 0, 0, 0, 0));
         avatarContainer.setPivotX(0);
         avatarContainer.setPivotY(0);
-        avatarContainer2.addView(avatarContainer, LayoutHelper.createFrame(AVATAR_SMALL_SIZE, AVATAR_SMALL_SIZE, Gravity.TOP | Gravity.LEFT, 64, 0, 0, 0));
+        avatarContainer2.addView(avatarContainer, LayoutHelper.createFrame(AVATAR_SMALL_SIZE, AVATAR_SMALL_SIZE, Gravity.TOP | Gravity.LEFT, AVATAR_START_SPACE, 0, 0, 0));
         avatarImage = new AvatarImageView(context) {
             @Override
             public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
@@ -5770,7 +5770,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) avatarContainer.getLayoutParams();
         params.width = (int) AndroidUtilities.lerp(avatarSmallSize(), listView.getMeasuredWidth() / avatarScale, value);
         params.height = (int) AndroidUtilities.lerp(avatarSmallSize(), (extraHeight + newTop) / avatarScale, value);
-        params.leftMargin = (int) AndroidUtilities.lerp(AndroidUtilities.dpf2(64f), 0f, value);
+        params.leftMargin = (int) AndroidUtilities.lerp(avatarStartSpace(), 0f, value);
         avatarContainer.requestLayout();
 
         updateCollectibleHint();
@@ -7541,7 +7541,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
                 final FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) avatarContainer.getLayoutParams();
                 params.width = params.height = (int) AndroidUtilities.lerp(avatarSmallSize(), (extraHeight + newTop) / avatarScale, avatarAnimationProgress);
-                params.leftMargin = (int) AndroidUtilities.lerp(AndroidUtilities.dpf2(64f), 0f, avatarAnimationProgress);
+                params.leftMargin = (int) AndroidUtilities.lerp(avatarStartSpace(), 0f, avatarAnimationProgress);
                 avatarContainer.requestLayout();
 
                 updateCollectibleHint();
@@ -14643,6 +14643,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
     /** Avatar sizes. */
     private static final float
+            AVATAR_START_SPACE = 64f,
             AVATAR_SMALL_SIZE = 42f,
             AVATAR_EXTRA_SIZE = 60f - AVATAR_SMALL_SIZE,
             AVATAR_LARGE_SIZE = AVATAR_SMALL_SIZE * 2 + AVATAR_EXTRA_SIZE;
@@ -14655,4 +14656,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
     /** @return avatar small size (normal by guidelines). */
     private static int avatarSmallSize() { return AndroidUtilities.dp(AVATAR_SMALL_SIZE); }
+
+    /** @return avatar start space (normal by guidelines). */
+    private static int avatarStartSpace() { return AndroidUtilities.dp(AVATAR_START_SPACE); }
 }
