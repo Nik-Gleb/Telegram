@@ -5692,7 +5692,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             }
         }
 
-        if (extraHeight > headerHeight() && expandProgress < 0.33f) {
+        if (isHeaderExpanded() && expandProgress < 0.33f) {
             refreshNameAndOnlineXY();
         }
 
@@ -5752,7 +5752,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             statusColor = getThemedColor(Theme.key_avatar_subtitleInProfileBlue);
         }
         onlineTextView[1].setTextColor(ColorUtils.blendARGB(applyPeerColor(statusColor, true, online), 0xB3FFFFFF, value));
-        if (extraHeight > headerHeight()) {
+        if (isHeaderExpanded()) {
             nameTextView[1].setPivotY(AndroidUtilities.lerp(0, nameTextView[1].getMeasuredHeight(), value));
             nameTextView[1].setScaleX(AndroidUtilities.lerp(1.12f, 1.67f, value));
             nameTextView[1].setScaleY(AndroidUtilities.lerp(1.12f, 1.67f, value));
@@ -7254,7 +7254,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
             listView.setTopGlowOffset((int) extraHeight);
 
-            listView.setOverScrollMode(extraHeight > headerHeight() && extraHeight < listView.getMeasuredWidth() - newTop ? View.OVER_SCROLL_NEVER : View.OVER_SCROLL_ALWAYS);
+            listView.setOverScrollMode(isHeaderExpanded() && extraHeight < listView.getMeasuredWidth() - newTop ? View.OVER_SCROLL_NEVER : View.OVER_SCROLL_ALWAYS);
 
             if (writeButton != null) {
                 writeButton.setTranslationY((actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0) + ActionBar.getCurrentActionBarHeight() + extraHeight + searchTransitionOffset - AndroidUtilities.dp(29.5f));
@@ -7701,9 +7701,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private void needLayoutText(float diff) {
         FrameLayout.LayoutParams layoutParams;
         float scale = nameTextView[1].getScaleX();
-        float maxScale = extraHeight > headerHeight() ? 1.67f : 1.12f;
+        float maxScale = isHeaderExpanded() ? 1.67f : 1.12f;
 
-        if (extraHeight > headerHeight() && scale != maxScale) {
+        if (isHeaderExpanded() && scale != maxScale) {
             return;
         }
 
@@ -14627,6 +14627,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
     /** @return relative header stretching (can be > 1). */
     private float headerStretchRatio() { return extraHeight / headerHeight(); }
+
+    /** @return true if the header has already stretched beyond the base height. */
+    private boolean isHeaderExpanded() { return extraHeight > headerHeight(); }
 
     /** @return additional height of header  */
     private static int headerHeight() { return AndroidUtilities.dp(88f);  }
