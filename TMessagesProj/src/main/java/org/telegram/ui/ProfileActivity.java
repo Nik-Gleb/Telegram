@@ -5690,7 +5690,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             }
         }
 
-        if (isHeaderExpanded() && expandProgress < 0.33f) {
+        if (isHeaderExpanded() && expandProgress < AVATAR_EXPAND_FACTOR) {
             refreshNameAndOnlineXY();
         }
 
@@ -7334,7 +7334,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             float h = openAnimationInProgress ? initialAnimationExtraHeight : extraHeight;
             if (h > headerHeight() || isPulledDown) {
                 expandProgress = Math.max(0f, Math.min(1f, (h - headerHeight()) / (listView.getMeasuredWidth() - newTop - headerHeight())));
-                avatarScale = AndroidUtilities.lerp(AVATAR_SCALE_BASELINE_1, AVATAR_SCALE_BASELINE_2, Math.min(1f, expandProgress * 3f));
+                avatarScale = AndroidUtilities.lerp(AVATAR_SCALE_BASELINE_1, AVATAR_SCALE_BASELINE_2, Math.min(1f, expandProgress * AVATAR_EXPAND_RATIO));
                 if (storyView != null) {
                     storyView.invalidate();
                 }
@@ -7344,7 +7344,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
                 final float durationFactor = Math.min(AndroidUtilities.dpf2(2000f), Math.max(AndroidUtilities.dpf2(1100f), Math.abs(listViewVelocityY))) / AndroidUtilities.dpf2(1100f);
 
-                if (allowPullingDown && (openingAvatar || expandProgress >= 0.33f)) {
+                if (allowPullingDown && (openingAvatar || expandProgress >= AVATAR_EXPAND_FACTOR)) {
                     if (!isPulledDown) {
                         if (otherItem != null) {
                             if (!getMessagesController().isChatNoForwards(currentChat)) {
@@ -14647,6 +14647,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             AVATAR_SMALL_SIZE = 42f,
             AVATAR_EXTRA_SIZE = 60f - AVATAR_SMALL_SIZE,
             AVATAR_LARGE_SIZE = AVATAR_SMALL_SIZE * 2 + AVATAR_EXTRA_SIZE;
+
+    private static final float
+            AVATAR_EXPAND_RATIO = 3f,
+            AVATAR_EXPAND_FACTOR = 1f / AVATAR_EXPAND_RATIO;
 
     /** Avatar Scales. */
     private static final float
