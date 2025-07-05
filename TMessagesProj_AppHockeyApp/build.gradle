@@ -36,17 +36,12 @@ dependencies {
 
 android {
     compileSdkVersion 34
-    buildToolsVersion '34.0.0'
+    buildToolsVersion '36.0.0'
 
     defaultConfig.applicationId = APP_PACKAGE
 
     sourceSets.main.jniLibs.srcDirs = ['../TMessagesProj/jni/']
 
-    lintOptions {
-        disable 'MissingTranslation'
-        disable 'ExtraTranslation'
-        disable 'BlockedPrivateApi'
-    }
 
     dexOptions {
         jumboMode = true
@@ -186,9 +181,10 @@ android {
         buildConfig = true
     }
     namespace 'org.telegram.messenger.regular'
-
-    lintOptions {
+    lint {
         checkReleaseBuilds false
+        disable 'MissingTranslation', 'ExtraTranslation', 'BlockedPrivateApi'
     }
+
 }
 

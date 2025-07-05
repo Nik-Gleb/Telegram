@@ -71,38 +71,49 @@ dependencies {
 def isWindows = String.valueOf(DefaultNativePlatform.currentOperatingSystem.toFamilyName() == OperatingSystemFamily.WINDOWS)
 android {
     compileSdkVersion 34
-    buildToolsVersion '34.0.0'
+    buildToolsVersion '36.0.0'
     ndkVersion "21.4.7075529"
 
-    sourceSets.main.jniLibs.srcDirs = ['./jni/']
+//    sourceSets.main.jniLibs.srcDirs = ['./jni/']
+//
+//    externalNativeBuild {
+//        cmake {
+//            path 'jni/CMakeLists.txt'
+//        }
+//    }
 
-    externalNativeBuild {
-        cmake {
-            path 'jni/CMakeLists.txt'
-        }
-    }
-
-    lintOptions {
-        disable 'MissingTranslation'
-        disable 'ExtraTranslation'
-        disable 'BlockedPrivateApi'
-    }
 
     dexOptions {
         jumboMode = true
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
 
         coreLibraryDesugaringEnabled true
+        incremental true
     }
 
+    tasks.withType(JavaCompile).configureEach { // ленивая конфигурация
+        options.fork = true                     // ► включаем fork
+        // дополнительные примеры
+        options.forkOptions.jvmArgs = [
+          '-Xmx16g',
+          '-XX:+UseG1GC',
+          '-XX:+HeapDumpOnOutOfMemoryError',
+          '-Dfile.encoding=UTF-8',
+          '-XX:MaxMetaspaceSize=4g',
+          '-XX:CompressedClassSpaceSize=1g'
+        ]
+        options.forkOptions.memoryMaximumSize = '16g'
+        // options.forkOptions.javaHome = file("$rootDir/jdk-21") // иной JDK
+    }
 
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 34
+        resourceConfigurations += ['ru', 'xhdpi']
 
         vectorDrawables.generatedDensities = ['mdpi', 'hdpi', 'xhdpi', 'xxhdpi']
 
@@ -118,12 +129,12 @@ android {
 
     buildTypes {
         debug {
-            jniDebuggable true
+            jniDebuggable false
             minifyEnabled false
             shrinkResources false
             multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), '../TMessagesProj/proguard-rules.pro', '../TMessagesProj/proguard-rules-beta.pro'
-            ndk.debugSymbolLevel = 'FULL'
+            ndk.debugSymbolLevel = 'NONE'
             buildConfigField "String", "BUILD_VERSION_STRING", "\"" + APP_VERSION_NAME + "\""
             buildConfigField "String", "APP_CENTER_HASH", "\"\""
             buildConfigField "String", "BETA_URL", "\"" + getProps("BETA_PRIVATE_URL") + "\""
@@ -204,8 +215,12 @@ android {
         }
     }
     namespace 'org.telegram.messenger'
+    lint {
+        disable 'MissingTranslation', 'ExtraTranslation', 'BlockedPrivateApi'
+    }
 }
 
+clean.enabled = false
 
 def getProps(String propName) {
     def propsFile = rootProject.file('local.properties')

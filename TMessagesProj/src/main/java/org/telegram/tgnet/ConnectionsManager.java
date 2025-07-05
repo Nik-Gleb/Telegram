@@ -836,10 +836,10 @@ public class ConnectionsManager extends BaseController {
                     if (BuildVars.LOGS_ENABLED) {
                         FileLog.d("start firebase task");
                     }
-                    FirebaseTask task = new FirebaseTask(currentAccount);
-                    task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null, null, null);
-                    FileLog.d("12. currentTask = firebase");
-                    currentTask = task;
+//                    FirebaseTask task = new FirebaseTask(currentAccount);
+//                    task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null, null, null);
+//                    FileLog.d("12. currentTask = firebase");
+//                    currentTask = task;
                 }
             });
         });
