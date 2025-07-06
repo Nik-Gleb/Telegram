@@ -7352,14 +7352,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
             float h = openAnimationInProgress ? initialAnimationExtraHeight : extraHeight;
             if (h > headerHeight() || isPulledDown) {
+                final float expandLine = AVATAR_EXPAND_FACTOR + expandThreshold;
                 expandProgress = Math.max(0f, Math.min(1f, (h - headerHeight()) / (avatarContainerWidth - newTop - headerHeight())));
                 final boolean draggingDown = expandProgress > lastExpandProgress;
                 final boolean draggingUp   = expandProgress < lastExpandProgress;
                 lastExpandProgress = expandProgress;
-                final float expandValue = Math.min(1f, expandProgress * AVATAR_EXPAND_RATIO);
+                final float expandValue = Math.min(1f, expandProgress / (AVATAR_EXPAND_FACTOR + expandThreshold));
                 avatarScale = AndroidUtilities.lerp(AVATAR_SCALE_BASELINE_1, AVATAR_SCALE_BASELINE_2, expandValue);
                 avatarX = avatarContainerCenterX - avatarSmallSize * avatarScale / 2f;
-                avatarY = AndroidUtilities.lerp(avatarBaseLineY1, avatarBaseLineY2, expandValue);
+                avatarY = AndroidUtilities.lerp(avatarBaseLineY1, avatarBaseLineY1, expandValue);
                 if (storyView != null) {
                     storyView.invalidate();
                 }
@@ -7367,17 +7368,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     giftsView.invalidate();
                 }
 
-                final boolean reachOpen  = !isPulledDown && draggingDown &&  expandProgress     >= AVATAR_EXPAND_FACTOR + expandThreshold;
-                final boolean reachClose =  isPulledDown && draggingUp && (1f - expandProgress) >= AVATAR_EXPAND_FACTOR + expandThreshold;
+                final boolean reachOpen  = !isPulledDown && draggingDown &&  expandProgress     >= expandLine;
+                final boolean reachClose =  isPulledDown && draggingUp && (1f - expandProgress) >= expandLine;
 
                 final float durationFactor = Math.min(AndroidUtilities.dpf2(2000f), Math.max(AndroidUtilities.dpf2(1100f), Math.abs(listViewVelocityY))) / AndroidUtilities.dpf2(1100f);
+                listViewVelocityY = 0f;
 
-                if (allowPullingDown && (openingAvatar || expandProgress >= AVATAR_EXPAND_FACTOR)) {
+                if (allowPullingDown && (openingAvatar || expandProgress >= expandLine)) {
                     ViewGroup.LayoutParams params = avatarsViewPager.getLayoutParams();
                     params.width = (int) avatarContainerWidth;
                     params.height = (int) (h + newTop);
                     avatarsViewPager.requestLayout();
-                } else  if (isNoExpandingOrCollapsingNow() || expandAnimatorValues[1] == 1) {
+                } else if (isNoExpandingOrCollapsingNow() || expandAnimatorValues[1] == 1) {
                     avatarContainer.setScaleX(avatarScale);
                     avatarContainer.setScaleY(avatarScale);
                 }
@@ -7434,6 +7436,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 avatarsViewPager.setVisibility(View.VISIBLE);
                             }
                         });
+                        if (expandAnimator.getDuration() > 0) cancelTouch(listView);
                         hapticFeedback(false);
                         expandAnimator.start();
                     }
@@ -7500,6 +7503,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         avatarImage.setForegroundAlpha(1f);
                         avatarContainer.setVisibility(View.VISIBLE);
                         avatarsViewPager.setVisibility(View.GONE);
+                        if (expandAnimator.getDuration() > 0) cancelTouch(listView);
                         hapticFeedback(true);
                         expandAnimator.start();
                     }
@@ -14682,7 +14686,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             AVATAR_SMALL_SIZE = 42f,
             AVATAR_MAIN_SIZE = 92f,
             AVATAR_EXTRA_SIZE = AVATAR_MAIN_SIZE - AVATAR_SMALL_SIZE,
-            AVATAR_LARGE_SIZE = AVATAR_MAIN_SIZE + 8;
+            AVATAR_LARGE_SIZE = AVATAR_MAIN_SIZE + AVATAR_SMALL_SIZE;
 
     private static final float
             AVATAR_EXPAND_RATIO = 10f,
@@ -14719,11 +14723,39 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         return Math.min(threshold, 0.15f);                          // not more >15 %
     }
 
+    /**
+     * Forcefully cancels any ongoing touch interactions and drag operations on the RecyclerListView.
+     *
+     * This method effectively "yanks" the view out from under the user's finger by dispatching
+     * a cancel event, stopping all scrolling and nested scroll operations.
+     *
+     * @param view The RecyclerListView to cancel touch interactions for
+     */
+    private static void cancelTouch(RecyclerView view) {
+        view.stopScroll();
+        ViewCompat.stopNestedScroll(view, TYPE_TOUCH);
+        final long now = SystemClock.uptimeMillis();
+        final int action = MotionEvent.ACTION_CANCEL;
+        final float position = 0f;
+        final int state =0;
+        final MotionEvent cancel =
+                MotionEvent.obtain(
+                        now,
+                        now,
+                        action,
+                        position,
+                        position,
+                        state
+                );
+        final boolean result = view.dispatchTouchEvent(cancel);
+        cancel.recycle();
+    }
+
     private final void hapticFeedback(boolean weak) {
         if (avatarContainer == null) return;
         final int type = weak ?
                 HapticFeedbackConstants.SEGMENT_FREQUENT_TICK :
-                HapticFeedbackConstants.CLOCK_TICK;
+                HapticFeedbackConstants.SEGMENT_TICK;
         avatarContainer.performHapticFeedback(type);
     }
 
