@@ -5282,6 +5282,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     searchItem.setEnabled(!scrolling && !isPulledDown);
                 }
                 sharedMediaLayout.scrollingByUser = listView.scrollingByUser;
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) snapIfNeed(listView);
             }
 
             @Override
@@ -14784,5 +14785,28 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 overlaysView != null &&
                         overlaysView.animator != null &&
                         overlaysView.animator.isRunning();
+    }
+    /**
+     * Snaps the first item in the given {@link RecyclerView} to a stable position
+     * (either the very top of the list or just below the header) once scrolling
+     * has finished.
+     *
+     * @param list RecyclerView whose scroll position should be corrected.
+     */
+    private static void snapIfNeed(RecyclerView list) {
+        if (list == null) return;
+        final RecyclerView.LayoutManager layout = list.getLayoutManager();
+        if (layout == null) return;
+        final View view = layout.findViewByPosition(0);
+        if (view == null) return;
+        final int top = view.getTop();
+        if (top <= 0) return;
+        final int height = headerHeight();
+        if (top >= height) return;
+        final int middle = height / 2;
+        final int offset = top < middle ? 0 : height;
+        final int delta = top - offset;
+        final android.view.animation.Interpolator easing = CubicBezierInterpolator.EASE_OUT_QUINT;
+        list.smoothScrollBy(0, delta, easing);
     }
 }
