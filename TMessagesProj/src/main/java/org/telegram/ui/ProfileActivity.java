@@ -7357,10 +7357,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 final boolean draggingDown = expandProgress > lastExpandProgress;
                 final boolean draggingUp   = expandProgress < lastExpandProgress;
                 lastExpandProgress = expandProgress;
-                final float expandValue = Math.min(1f, expandProgress / (AVATAR_EXPAND_FACTOR + expandThreshold));
+                if (draggingDown) expandProgress *= 1.5f;
+                final float expandValue = Math.min(1f, expandProgress / expandLine);
                 avatarScale = AndroidUtilities.lerp(AVATAR_SCALE_BASELINE_1, AVATAR_SCALE_BASELINE_2, expandValue);
                 avatarX = avatarContainerCenterX - avatarSmallSize * avatarScale / 2f;
-                avatarY = AndroidUtilities.lerp(avatarBaseLineY1, avatarBaseLineY1, expandValue);
+                avatarY = AndroidUtilities.lerp(avatarBaseLineY1, avatarBaseLineY2, expandValue);
                 if (storyView != null) {
                     storyView.invalidate();
                 }
@@ -7368,7 +7369,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     giftsView.invalidate();
                 }
 
-                final boolean reachOpen  = !isPulledDown && draggingDown &&  expandProgress     >= expandLine;
+                final boolean reachOpen  = !isPulledDown && draggingDown && expandProgress      >= expandLine;
                 final boolean reachClose =  isPulledDown && draggingUp && (1f - expandProgress) >= expandLine;
 
                 final float durationFactor = Math.min(AndroidUtilities.dpf2(2000f), Math.max(AndroidUtilities.dpf2(1100f), Math.abs(listViewVelocityY))) / AndroidUtilities.dpf2(1100f);
@@ -14719,7 +14720,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         final android.view.ViewConfiguration config =
                 android.view.ViewConfiguration.get(context);
         float touchSlop = config.getScaledTouchSlop();
-        final float threshold = 1.2f * touchSlop / headerHeight();  // + 20% reserved
+        final float threshold = 1.1f * touchSlop / headerHeight();  // + 10% reserved
         return Math.min(threshold, 0.15f);                          // not more >15 %
     }
 
