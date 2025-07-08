@@ -14737,7 +14737,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         final long now = SystemClock.uptimeMillis();
         final int action = MotionEvent.ACTION_CANCEL;
         final float position = 0f;
-        final int state =0;
+        final int state = 0;
         final MotionEvent cancel =
                 MotionEvent.obtain(
                         now,
@@ -14751,6 +14751,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         cancel.recycle();
     }
 
+    /**
+     * Performs haptic feedback with varying intensity based on the specified parameter.
+     *
+     * @param weak if true, performs a weak frequent tick feedback; otherwise - standard feedback
+     */
     private final void hapticFeedback(boolean weak) {
         if (avatarContainer == null) return;
         final int type = weak ?
