@@ -5100,13 +5100,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         updateCollectibleHint();
                     }
                 }
-                @Override
-                public void setPivotX(float pivotX) { /* super.setPivotX(pivotX); */ }
-                @Override
-                public void requestLayout() {
-                    super.setPivotX(textWidth(this) / 2f);
-                    super.requestLayout();
-                }
             };
             if (a == 1) {
                 nameTextView[a].setTextColor(getThemedColor(Theme.key_profile_title));
@@ -5165,24 +5158,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             showStatusButton.setTextColor(Theme.multAlpha(Theme.adaptHSV(color, -.02f, +.15f), 1.4f));
                         }
                     }
-                    @Override
-                    public void setPivotX(float pivotX) { /* super.setPivotX(pivotX); */ }
-                    @Override
-                    public void requestLayout() {
-                        super.setPivotX(textWidth(this) / 2f);
-                        super.requestLayout();
-                    }
                 };
             } else {
-                onlineTextView[a] = new LinkSpanDrawable.ClickableSmallTextView(context) {
-                    @Override
-                    public void setPivotX(float pivotX) { /* super.setPivotX(pivotX); */ }
-                    @Override
-                    public void requestLayout() {
-                        super.setPivotX(textWidth(this) / 2f);
-                        super.requestLayout();
-                    }
-                };
+                onlineTextView[a] = new LinkSpanDrawable.ClickableSmallTextView(context);
             }
 
             onlineTextView[a].setEllipsizeByGradient(true);
@@ -14810,21 +14788,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 overlaysView != null &&
                         overlaysView.animator != null &&
                         overlaysView.animator.isRunning();
-    }
-
-    /**
-     * Returns the width of the SimpleTextView text, including side icons.
-     *
-     * @param view instance of SimpleTextView
-     *
-     * @return width of the text with icons, rounded up
-     */
-    private static float textWidth(@NonNull SimpleTextView view) {
-        final CharSequence text = view.getText();
-        final String content = text != null ? text.toString() : "";
-        float width = view.getPaint().measureText(content);
-        float drawables = view.getSideDrawablesSize();
-        return (float) Math.ceil(width + drawables);
     }
     /**
      * Snaps the first item in the given {@link RecyclerView} to a stable position
