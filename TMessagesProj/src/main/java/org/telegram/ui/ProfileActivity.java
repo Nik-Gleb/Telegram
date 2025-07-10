@@ -2803,10 +2803,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             private boolean lock = false;
             @Override
             public boolean dispatchTouchEvent(MotionEvent ev) {
-                if (!isNoExpandingOrCollapsingNow() || (lock && ev.getAction() != MotionEvent.ACTION_UP)) {
+                if (ev.getAction() == MotionEvent.ACTION_UP) lock = false;
+                else if (!isNoExpandingOrCollapsingNow() || lock) {
                     lock = true;
                     return true;
-                } else  lock = false;
+                }
                 if (pinchToZoomHelper.isInOverlayMode()) {
                     return pinchToZoomHelper.onTouchEvent(ev);
                 }
