@@ -2800,8 +2800,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         fragmentView = new NestedFrameLayout(context) {
 
+            private boolean lock = false;
             @Override
             public boolean dispatchTouchEvent(MotionEvent ev) {
+                if (!isNoExpandingOrCollapsingNow() || (lock && ev.getAction() != MotionEvent.ACTION_UP)) {
+                    lock = true;
+                    return true;
+                } else  lock = false;
                 if (pinchToZoomHelper.isInOverlayMode()) {
                     return pinchToZoomHelper.onTouchEvent(ev);
                 }
